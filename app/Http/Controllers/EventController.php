@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class EventController extends Controller
 {
     public function index(){
-        $allEvent = Event::all();  // Use Event here
+        $allEvent = Event::all();  
         return response()->json($allEvent);
     }
 
@@ -25,7 +25,7 @@ class EventController extends Controller
 
         $userId = Auth::id();
 
-        $event = Event::create([  // Use Event here
+        $event = Event::create([ 
             'id_user' => $userId,
             'nama_event' => $validateData['nama_event'],
             'deskripsi' => $validateData['deskripsi'],
@@ -50,7 +50,7 @@ class EventController extends Controller
         ]);
 
         $userId = Auth::id();
-        $event = Event::find($id);  // Use Event here
+        $event = Event::find($id);  
 
         if(!$event || $event->id_user !== $userId){
             return response()->json(['message' => 'Event not found or unauthorized'], 403);
@@ -63,7 +63,7 @@ class EventController extends Controller
 
     public function destroy(string $id){
         $userId = Auth::id();
-        $event = Event::find($id);  // Use Event here
+        $event = Event::find($id);  
 
         if(!$event || $event->id_user !== $userId){
             return response()->json(['message' => 'Event not found or not logged in'], 403);
@@ -72,5 +72,26 @@ class EventController extends Controller
         $event->delete();
 
         return response()->json(['message' => 'Event deleted successfully']);
+    }
+
+   
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('nama_event'); 
+
+     
+        if (!$searchTerm) {
+            return response()->json(['message' => 'Parameter nama_event is required'], 400);
+        }
+    
+     
+        $events = Event::where('nama_event', 'LIKE', '%' . $searchTerm . '%')->get();
+    
+        
+        if ($events->isEmpty()) {
+            return response()->json(['message' => 'No events found'], 404);
+        }
+    
+        return response()->json($events);
     }
 }

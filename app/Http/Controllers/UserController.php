@@ -25,7 +25,7 @@ class UserController extends Controller
 
         return response()->json([
             'user' => $user,
-            'message' => 'User registered successfully'
+            'message' => 'User registered successfully',
         ], 201);
 
     }
@@ -45,7 +45,7 @@ class UserController extends Controller
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
         return response()->json([
-            'detail' => $user->only(['id', 'name', 'email', 'password']),  // Include 'password' here
+            'detail' => $user->only(['id', 'name', 'email', 'password']),  
             'token' => $token
         ]);
     }
@@ -58,5 +58,51 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'Not logged in'], 401);
+    }
+
+
+    public function profile()
+    {
+        $users = User::all();
+
+        return response()->json([
+            'message' => 'All users retrieved successfully',
+            'users' => $users,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|integer|exists:users,id',
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $request->id,
+            'password' => 'sometimes|required|string|min:8',
+        ]);
+
+        $user = User::find($validatedData['id']);
+
+        if (isset($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        }
+
+        $user->update($validatedData);
+
+        return response()->json(['message' => 'User berhasil diperbarui', 'user' => $user]);
+    }
+
+
+
+    public function destroy(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|integer|exists:users,id',
+        ]);
+
+        $user = User::find($validatedData['id']);
+
+        $user->delete();
+
+        return response()->json(['message' => 'User berhasil dihapus']);
     }
 }

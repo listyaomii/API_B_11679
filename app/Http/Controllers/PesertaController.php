@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use\App\Models\User;
-use\App\Models\Event;
+use App\Models\Event;
+use App\Models\Peserta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

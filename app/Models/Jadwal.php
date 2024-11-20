@@ -1,32 +1,27 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Peserta extends Model
+class Jadwal extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
-
-    protected $table = "pesertas";
+    
+    protected $table = "jadwals";
     protected $primaryKey = "id";
 
     protected $fillable = [
-        
-        'id_user',
+   
         'id_event',
-        'nama',
-        'email',
-        'telepon'
+        'judul_sesi',
+        'deskripsi_sesi',
+        'waktu_mulai',
+        'waktu_selesai'
         
-    ];
-
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
+    ]; 
 
     public function event(){
         return $this->belongsTo(Event::class);
